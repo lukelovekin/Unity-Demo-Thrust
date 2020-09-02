@@ -7,13 +7,17 @@ using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour {
 
-    [SerializeField] float rcsThrust = 200f;
+    [SerializeField] float rcsThrust = 400f;
     [SerializeField] float mainThrust = 3f;
+    [SerializeField] float levelLoadDelay = 1f;
+
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip success;
     [SerializeField] AudioClip death;
 
-
+    [SerializeField] ParticleSystem mainEngineParticles;
+    [SerializeField] ParticleSystem successParticles;
+    [SerializeField] ParticleSystem deathParticles;
 
     Rigidbody rigidBody;
     AudioSource audio;
@@ -63,7 +67,8 @@ public class Rocket : MonoBehaviour {
         state = State.Dying;
         audio.Stop();
         audio.PlayOneShot(death);
-        Invoke("RestartGame", 1f);
+        deathParticles.Play();
+        Invoke("RestartGame", levelLoadDelay);
     }
 
     private void SuccessSequence()
@@ -71,7 +76,8 @@ public class Rocket : MonoBehaviour {
         state = State.Transcending;
         audio.Stop();
         audio.PlayOneShot(success);
-        Invoke("LoadNextScene", 1f); // parameterise time
+        successParticles.Play();
+        Invoke("LoadNextScene", levelLoadDelay); // parameterise time
     }
 
     private void RestartGame()
@@ -106,7 +112,6 @@ public class Rocket : MonoBehaviour {
 
     private void ThrustAndAudio()
     {
-
         if (Input.GetKey(KeyCode.Space))
         {
             ApplyThrust();
@@ -114,15 +119,17 @@ public class Rocket : MonoBehaviour {
         else
         {
             audio.Stop();
+            mainEngineParticles.Stop();
         }
     }
 
     private void ApplyThrust()
     {
-        rigidBody.AddRelativeForce(Vector3.up * mainThrust); // can thrust while rotating
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime); // can thrust while rotating
         if (!audio.isPlaying)
         {
             audio.PlayOneShot(mainEngine);
+            mainEngineParticles.Play();
         }
     }
 }
