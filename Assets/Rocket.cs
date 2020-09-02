@@ -1,7 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿// using System;
+// using System.Collections;
+// using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class Rocket : MonoBehaviour {
 
@@ -33,10 +35,12 @@ public class Rocket : MonoBehaviour {
             case "Friendly":
                 print("ok");
                 break;
-            case "Fuel":
-                print("fuel");
+            case "Finish":
+                print("finish");
+                SceneManager.LoadScene(1);
                 break;
             default:
+                SceneManager.LoadScene(0);
                 print("dead");
                 break;
 
